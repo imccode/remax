@@ -1,7 +1,9 @@
 export const alias = {
   id: 'id',
+  name: 'name',
   className: 'class',
   style: 'style',
+  animation: 'animation',
   value: 'value',
   indicatorStyle: 'indicator-style',
   indicatorClass: 'indicator-class',
@@ -12,7 +14,6 @@ export const alias = {
   onChange: 'bindchange',
   onPickStart: 'bindpickstart',
   onPickEnd: 'bindpickend',
-  animation: 'animation',
 };
 
 export const props = Object.values(alias);

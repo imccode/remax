@@ -1,25 +1,17 @@
-import API from './API';
-import {
-  Entries as EntriesType,
-  RemaxOptions as RemaxOptionsType,
-  RemaxConfig as RemaxConfigType,
-} from 'remax-types';
 export { default as logger } from './build/utils/output';
 import yargs from 'yargs';
-import build from './build';
-import { checkRemaxVersion } from './checkVersions';
-
-export type Entries = EntriesType;
-export type RemaxOptions = RemaxOptionsType;
-export type RemaxConfig = RemaxConfigType;
+import { build } from './build';
+import analytics from './analytics';
 
 export let cli = yargs;
 
-export function run(args: any, context?: any, callback?: yargs.ParseCallback) {
-  checkRemaxVersion();
+export { default as buildMini } from './build/mini';
+export { default as buildWeb } from './build/web';
+export { getDefaultOptions } from './defaultOptions';
 
+export function run(args: any, callback?: yargs.ParseCallback) {
   cli = yargs
-    .scriptName('remax-cli')
+    .scriptName('remax')
     .usage('Usage: $0 <command> [options]')
     .command<any>(
       'build',
@@ -28,10 +20,11 @@ export function run(args: any, context?: any, callback?: yargs.ParseCallback) {
       () => {
         // ignore
       },
-      (argv: any) => build(argv, context)
+      (argv: any) => {
+        analytics.event('cli', 'build', argv.target).send();
+        build(argv);
+      }
     );
-
-  cli = API.extendsCLI({ cli });
 
   cli
     .option('watch', {
@@ -41,11 +34,28 @@ export function run(args: any, context?: any, callback?: yargs.ParseCallback) {
       default: false,
     })
     .option('target', {
-      describe: '目标平台，如 wechat，alipay',
+      describe: '目标平台，如 wechat，ali',
       alias: 't',
       type: 'string',
       required: true,
       requiresArg: true,
+    })
+    .option('notify', {
+      describe: '编译错误提醒',
+      alias: 'n',
+      type: 'boolean',
+      default: false,
+    })
+    .option('port', {
+      describe: '指定端口号',
+      alias: 'p',
+      type: 'number',
+    })
+    .option('analyze', {
+      describe: '编译分析',
+      alias: 'a',
+      type: 'boolean',
+      default: false,
     })
     .showHelpOnFail(false);
 

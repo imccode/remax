@@ -1,4 +1,4 @@
-import createHostComponent from '../../createHostComponent';
+import { createHostComponent } from '@remax/shared';
 
 import { BaseProps } from '../../types/component';
 
@@ -16,6 +16,7 @@ export interface SwiperProps extends BaseProps {
   vertical?: boolean;
   onChange?: (e: any) => void;
   onTransition?: (e: any) => void;
+  onAnimationFinish?: (e: any) => void;
 }
 
-export default createHostComponent<SwiperProps>('swiper');
+export const Swiper = createHostComponent<SwiperProps>('swiper');
